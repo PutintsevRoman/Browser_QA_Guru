@@ -5,27 +5,35 @@ import io.appium.java_client.AppiumBy;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.switchTo;
 import static io.qameta.allure.Allure.step;
 
 public class AndroidSearchTests extends TestBase {
     @Test
     void searchTest() {
-        step("Type search", () -> {
-            $(AppiumBy.accessibilityId("Search Wikipedia")).click();
-            $(AppiumBy.id("org.wikipedia.alpha:id/search_src_text"))
-                    .sendKeys("USA");
+        back();
+       // switchTo().alert().accept();
+        step("Saved Bar check ", () -> {
+            $(AppiumBy.id("org.wikipedia.alpha:id/nav_tab_reading_lists")).click();
+            $(AppiumBy.id("org.wikipedia.alpha:id/messageTitleView")).shouldHave(Condition.text("Sync reading lists"));
         });
-        step("Verify content found", () ->
-                $$(AppiumBy.id("org.wikipedia.alpha:id/page_list_item_title"))
-                        .shouldHave(sizeGreaterThan(0)));
-        step("Click first article", () ->
-                $$(AppiumBy.id("org.wikipedia.alpha:id/page_list_item_title"))
-                        .first().click());
-        step("Check the error ", () ->
-                $(AppiumBy.id("org.wikipedia.alpha:id/view_wiki_error_text"))
-                        .shouldHave(Condition.text("An error occurred")));
+        step("Search Bar check ", () -> {
+            $(AppiumBy.id("org.wikipedia.alpha:id/nav_tab_search")).click();
+            $(AppiumBy.id("org.wikipedia.alpha:id/history_title")).shouldHave(Condition.text("History"));
+        });
+        step("Edit Tab check ", () -> {
+            $(AppiumBy.id("org.wikipedia.alpha:id/nav_tab_edits")).click();
+            $(AppiumBy.id("org.wikipedia.alpha:id/messageTitleView"))
+                    .shouldHave(Condition.text("Did you know that everyone can edit Wikipedia?"));
+        });
+        step("Explore Tab check ", () -> {
+            $(AppiumBy.id("org.wikipedia.alpha:id/nav_tab_explore")).click();
+            $(AppiumBy.id("org.wikipedia.alpha:id/view_announcement_text"))
+                    .shouldHave(Condition.text("Customize your Explore feed You can now choose what to show on your feed, and also prioritize your favorite types of content."));
+        });
+
     }
+
 
 }

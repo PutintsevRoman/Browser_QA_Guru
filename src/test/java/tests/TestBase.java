@@ -3,6 +3,8 @@ package tests;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import drivers.BrowserstackMobileDriver;
+import drivers.LocalMobileDriver;
+import drivers.RealMobileDriver;
 import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterEach;
@@ -16,9 +18,25 @@ import static io.qameta.allure.Allure.step;
 
 
 public class TestBase {
+    static String Host;
     @BeforeAll
     public static void setup() {
-        Configuration.browser = BrowserstackMobileDriver.class.getName();
+
+        Host =  System.getProperty("deviceHost", "local");
+
+        switch (Host){
+            case ("browserstack"):
+                Configuration.browser = BrowserstackMobileDriver.class.getName();
+                break;
+            case ("real"):
+                Configuration.browser = RealMobileDriver.class.getName();
+                break;
+            case ("emulation"):
+            default:
+                Configuration.browser = LocalMobileDriver.class.getName();
+                break;
+        }
+
         Configuration.browserSize = null;
     }
 
@@ -38,6 +56,6 @@ public class TestBase {
 
         step("Close driver", Selenide::closeWebDriver);
 
-        Attach.video(sessionId);
+       if(Host.equals("browserstack")) Attach.video(sessionId);
     }
 }
